@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".EventInfo"
+    android:background="@color/background_blue"
+    android:id="@+id/eventInfoPopUp">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <ImageView
+        android:id="@+id/eventLogoInfoID"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/baseline_android_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+    <TextView
+        android:id="@+id/eventNameInfoID"
+        android:layout_width="358dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="3dp"
+        android:text="Name"
+        android:textSize="36sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/eventLogoInfoID"
+        app:layout_constraintTop_toTopOf="parent"
+        app:flow_horizontalAlign="center"
+        android:textColor="@color/white"/>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/eventNameInfoID"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+            <ImageView
+                android:id="@+id/eventFlyerInfoID"
+                android:layout_width="match_parent"
+                android:layout_height="534dp"
+                android:src="@drawable/baseline_android_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/eventNameInfoID" />
+
+            <TextView
+                android:id="@+id/eventDescriptionInfoID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textSize="36sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/eventFlyerInfoID"
+                android:textColor="@color/white"/>
+
+
+
+
+    <TextView
+        android:id="@+id/eventLocationInfoID"
+        android:layout_width="155dp"
+        android:layout_height="48dp"
+        android:text="Location"
+        android:textColor="@color/white"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/eventDescriptionInfoID"
+        />
+
+            <TextView
+                android:id="@+id/eventTimeInfoID"
+                android:layout_width="155dp"
+                android:layout_height="48dp"
+                android:text="Time"
+                android:textColor="@color/white"
+                android:textSize="36sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/eventLocationInfoID"
+                app:layout_constraintTop_toBottomOf="@id/eventDescriptionInfoID" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
