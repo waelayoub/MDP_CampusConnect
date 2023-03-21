@@ -37,12 +37,9 @@ class Home : Fragment() {
                         val event=eventSnapshot.getValue(EventModel::class.java)
                         eventlist.add(event!!)
                     }
-
                     eventRecyclerView.adapter=EventModelAdapter(requireContext(),eventlist)
-
                 }
             }
-
             override fun onCancelled(error: DatabaseError){
 
             }
@@ -53,27 +50,37 @@ class Home : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding=FragmentHomeBinding.inflate(inflater, container, false)
-        eventRecyclerView=binding.eventlist
+
+        eventlist.clear()
+
+        eventRecyclerView = binding.eventlist
+        adapter = EventModelAdapter(requireContext(),eventlist)
+
+        eventRecyclerView.layoutManager=LinearLayoutManager(context)
+        eventRecyclerView.setHasFixedSize(true)
+        eventRecyclerView.adapter=adapter
+
+        getEventData()
+
         return binding.root
     }
 
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        eventlist.clear()
-        getEventData()
-        val layoutManager=LinearLayoutManager(context)
-        eventRecyclerView=view.findViewById(R.id.eventlist)
-        eventRecyclerView.layoutManager=layoutManager
-        eventRecyclerView.setHasFixedSize(true)
-        adapter= EventModelAdapter(requireContext(),eventlist)
-        eventRecyclerView.adapter=adapter
-
-
-
-    }
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//        eventlist.clear()
+//        getEventData()
+//        val layoutManager=LinearLayoutManager(context)
+//        eventRecyclerView=view.findViewById(R.id.eventlist)
+//        eventRecyclerView.layoutManager=layoutManager
+//        eventRecyclerView.setHasFixedSize(true)
+//        adapter= EventModelAdapter(requireContext(),eventlist)
+//        eventRecyclerView.adapter=adapter
+//
+//
+//
+//    }
 
 
 }

@@ -51,10 +51,6 @@ class EventModelAdapter(val context: Context, val eventlist:ArrayList<EventModel
 
 
         Glide.with(context).load(currentitem.eventIcon).into(holder.eventImg)
-
-
     }
-
-
 
 }
