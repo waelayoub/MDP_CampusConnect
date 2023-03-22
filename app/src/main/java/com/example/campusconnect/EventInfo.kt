@@ -5,16 +5,36 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.example.campusconnect.databinding.FragmentEventInfoBinding
 
 
-class EventInfo : Fragment() {
+class EventInfo(private val eventName: String,
+                private val eventDate: String,
+                private val eventTime: String,
+                private val eventLocation: String,
+                private val eventOrganizer: String,
+                private val eventType: String,
+                private val eventCapacity: String,
+                private val eventDescription: String,
+                private val eventFlyer: String,
+                private val eventIcon: String,
+                private val eventId: String) : Fragment() {
+
+    private lateinit var binding: FragmentEventInfoBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_event_info, container, false)
+        binding= FragmentEventInfoBinding.inflate(inflater, container, false)
+        binding.eventNameInfoID.setText(eventName)
+        binding.eventTimeInfoID.setText(eventTime)
+        binding.eventDescriptionInfoID.setText(eventDescription)
+        binding.eventLocationInfoID.setText(eventLocation)
+        Glide.with(requireContext()).load(eventFlyer).into(binding.eventFlyerInfoID)
+
+        return binding.root
     }
 
 }

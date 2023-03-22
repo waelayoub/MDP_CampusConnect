@@ -34,6 +34,7 @@ class Home : Fragment() {
                 if (snapshot.exists()){
 
                     for (eventSnapshot in snapshot.children){
+                        eventSnapshot.key
                         val event=eventSnapshot.getValue(EventModel::class.java)
                         eventlist.add(event!!)
                     }
