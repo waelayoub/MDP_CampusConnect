@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture
 
 
 import android.view.View
+import android.view.WindowManager
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -53,6 +54,9 @@ class Splash_Screen : AppCompatActivity() {
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.overlayView.setVisibility(View.INVISIBLE)
+        binding.progressBar.setVisibility(View.INVISIBLE)
+        binding.EnterButton.isEnabled=true
 
         creatingInstanceMicrosoft(true)
 
@@ -62,8 +66,8 @@ class Splash_Screen : AppCompatActivity() {
         }
 
 
-        binding.progressBar.visibility = View.INVISIBLE
-        binding.EnterButton.visibility = View.VISIBLE
+//        binding.progressBar.visibility = View.INVISIBLE
+//        binding.EnterButton.visibility = View.VISIBLE
 
 
     }
@@ -194,6 +198,10 @@ class Splash_Screen : AppCompatActivity() {
                     return accessTokenFuture
                 }
             }).buildClient()
+
+        binding.EnterButton.isEnabled=false
+        binding.overlayView.setVisibility(View.VISIBLE);
+        binding.progressBar.setVisibility(View.VISIBLE);
 
 
 

@@ -5,55 +5,36 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.example.campusconnect.databinding.FragmentEventInfoBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [EventInfo.newInstance] factory method to
- * create an instance of this fragment.
- */
-class EventInfo : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class EventInfo(private val eventName: String,
+                private val eventDate: String,
+                private val eventTime: String,
+                private val eventLocation: String,
+                private val eventOrganizer: String,
+                private val eventType: String,
+                private val eventCapacity: String,
+                private val eventDescription: String,
+                private val eventFlyer: String,
+                private val eventIcon: String,
+                private val eventId: String) : Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var binding: FragmentEventInfoBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_event_info, container, false)
+        binding= FragmentEventInfoBinding.inflate(inflater, container, false)
+        binding.eventNameInfoID.setText(eventName)
+        binding.eventTimeInfoID.setText(eventTime)
+        binding.eventDescriptionInfoID.setText(eventDescription)
+        binding.eventLocationInfoID.setText(eventLocation)
+        Glide.with(requireContext()).load(eventFlyer).into(binding.eventFlyerInfoID)
+
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment EventInfo.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            EventInfo().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }

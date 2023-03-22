@@ -1,9 +1,5 @@
 package com.example.campusconnect
 
-
-
-
-
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -15,6 +11,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding:ActivityMainBinding
+    private val homeFragment = Home()
+    private val myEventsFragment=MyEvents()
+    private val settingsFragment=Settings()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,14 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setTheme(R.style.Theme_CampusConnect)
         setContentView(binding.root)
-        replaceFragment(Home())
-
-        val homeFragment=Home()
-        val myEventsFragment=MyEvents()
-        val settingsFragment=Settings()
-
-
-
+        replaceFragment(homeFragment)
 
         val bottomNav=findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNav.setOnNavigationItemSelectedListener{
@@ -41,8 +33,6 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
-
-
     }
 
 
@@ -51,7 +41,6 @@ class MainActivity : AppCompatActivity() {
             replace(R.id.frame_layout,fragment)
             commit()
         }
-
     }
 
 }

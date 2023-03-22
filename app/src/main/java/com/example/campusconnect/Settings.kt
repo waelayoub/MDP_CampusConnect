@@ -20,23 +20,13 @@ class Settings : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding=FragmentSettingsBinding.inflate(inflater, container, false)
-
-
         binding.SignOutButton.setOnClickListener {
-
-
-
             val auth = FirebaseAuth.getInstance()
             auth.signOut()
-
             val intent = Intent(requireContext(), Splash_Screen::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-
-
             startActivity(intent)
-
            }
-        // Inflate the layout for this fragment
         return binding.root
     }
 

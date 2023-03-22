@@ -16,7 +16,8 @@ import com.bumptech.glide.Glide
 import org.w3c.dom.Text
 
 
-class EventModelAdapter(val context: Context, val eventlist:ArrayList<EventModel>): RecyclerView.Adapter<EventModelAdapter.MyViewHolder>(){
+class EventModelAdapter(val context: Context, val eventlist:ArrayList<EventModel>):
+    RecyclerView.Adapter<EventModelAdapter.MyViewHolder>(){
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val eventName:TextView=itemView.findViewById(R.id.eventNameID)
@@ -42,19 +43,27 @@ class EventModelAdapter(val context: Context, val eventlist:ArrayList<EventModel
         holder.itemView.setOnClickListener{
 
             val activity=it!!.context as AppCompatActivity
-            val popUp=EventInfo()
             activity.supportFragmentManager.beginTransaction().apply {
+
+                val popUp=EventInfo(currentitem.eventName.toString(),
+                currentitem.eventDate.toString(),
+                currentitem.eventTime.toString(),
+                currentitem.eventLocation.toString(),
+                currentitem.eventOrganizer.toString(),
+                currentitem.eventType.toString(),
+                currentitem.eventCapacity.toString(),
+                currentitem.eventDescription.toString(),
+                currentitem.eventFlyer.toString(),
+                currentitem.eventIcon.toString(),
+                currentitem.eventId.toString())
                 replace(R.id.frame_layout,popUp).commit()
+
             }
 
         }
 
 
         Glide.with(context).load(currentitem.eventIcon).into(holder.eventImg)
-
-
     }
-
-
 
 }
