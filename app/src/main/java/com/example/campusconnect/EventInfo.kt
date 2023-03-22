@@ -32,7 +32,9 @@ class EventInfo(private val eventName: String,
         binding.eventTimeInfoID.setText(eventTime)
         binding.eventDescriptionInfoID.setText(eventDescription)
         binding.eventLocationInfoID.setText(eventLocation)
+        binding.eventDateInfoID.setText(eventDate)
         Glide.with(requireContext()).load(eventFlyer).into(binding.eventFlyerInfoID)
+        Glide.with(requireContext()).load(eventIcon).into(binding.eventLogoInfoID)
 
         return binding.root
     }
