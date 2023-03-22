@@ -149,6 +149,19 @@
                     android:textSize="15sp" />
             </LinearLayout>
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:background="@drawable/buttonshape"
+                android:text="add reminder"
+                android:drawableStart="@drawable/baseline_notifications_active_24"
+                android:layout_gravity="center"
+                android:paddingHorizontal="13dp"
+                android:layout_marginBottom="50dp"
+
+                />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
