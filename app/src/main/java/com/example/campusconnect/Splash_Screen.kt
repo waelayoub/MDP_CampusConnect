@@ -15,13 +15,11 @@ import com.microsoft.identity.client.IAuthenticationResult
 import com.microsoft.identity.client.ISingleAccountPublicClientApplication
 import com.microsoft.identity.client.SilentAuthenticationCallback
 import com.microsoft.identity.client.exception.MsalException
-import kotlinx.coroutines.*
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 
 
 import android.view.View
-import android.view.WindowManager
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -178,7 +176,7 @@ class Splash_Screen : AppCompatActivity() {
                     }
                 }
             } else {
-                print("I am in the auth.currentUser != null")
+                println("I am in the auth.currentUser != null")
                 loadingSavedAccount()
             }
         }
@@ -199,9 +197,11 @@ class Splash_Screen : AppCompatActivity() {
                 }
             }).buildClient()
 
+
+
         binding.EnterButton.isEnabled=false
-        binding.overlayView.setVisibility(View.VISIBLE);
-        binding.progressBar.setVisibility(View.VISIBLE);
+        binding.overlayView.setVisibility(View.VISIBLE)
+        binding.progressBar.setVisibility(View.VISIBLE)
 
 
 
@@ -209,7 +209,20 @@ class Splash_Screen : AppCompatActivity() {
         GlobalScope.launch(Dispatchers.IO) {
             val result = graphClient.me().buildRequest().get() ?: return@launch
             if (result.mail == null || result.id == null || result.displayName == null) {
+                println(result.mail)
+                println(result.id)
                 println("Somehow i entered here")
+                mSingleAccountApp!!.signOut()
+
+                GlobalScope.launch(Dispatchers.Main){
+                    binding.EnterButton.isEnabled=true
+                    binding.overlayView.setVisibility(View.INVISIBLE)
+                    binding.progressBar.setVisibility(View.INVISIBLE)
+
+                    Toast.makeText(applicationContext, "Not a valid email", Toast.LENGTH_SHORT).show()
+                }
+
+
                 return@launch
             } else {
                 firebaseAuthUsage(result)

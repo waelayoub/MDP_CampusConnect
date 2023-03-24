@@ -34,8 +34,8 @@ class Home : Fragment() {
                 if (snapshot.exists()){
 
                     for (eventSnapshot in snapshot.children){
-                        eventSnapshot.key
                         val event=eventSnapshot.getValue(EventModel::class.java)
+                        event!!.eventId=eventSnapshot.key
                         eventlist.add(event!!)
                     }
                     eventRecyclerView.adapter=EventModelAdapter(requireContext(),eventlist)
