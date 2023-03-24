@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.campusconnect.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 
 class MainActivity : AppCompatActivity() {
@@ -17,13 +19,11 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        binding=ActivityMainBinding.inflate(layoutInflater)
-
         super.onCreate(savedInstanceState)
+        binding=ActivityMainBinding.inflate(layoutInflater)
         setTheme(R.style.Theme_CampusConnect)
         setContentView(binding.root)
         replaceFragment(homeFragment)
-
         val bottomNav=findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNav.setOnNavigationItemSelectedListener{
             when(it.itemId){
@@ -37,6 +37,8 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun replaceFragment(fragment: Fragment){
+        println(binding.frameLayout.accessibilityClassName as String?)
+
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.frame_layout,fragment)
             commit()

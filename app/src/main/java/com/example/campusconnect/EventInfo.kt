@@ -10,12 +10,11 @@ import com.bumptech.glide.Glide
 import com.example.campusconnect.databinding.FragmentEventInfoBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 import java.util.*
 import java.text.SimpleDateFormat
-
+import kotlin.collections.HashMap
 
 
 class EventInfo(private val eventName: String,
@@ -32,7 +31,6 @@ class EventInfo(private val eventName: String,
 
     private lateinit var binding: FragmentEventInfoBinding
     private val auth: FirebaseAuth = Firebase.auth
-    private lateinit var dbref: DatabaseReference
 
 
 
@@ -55,29 +53,50 @@ class EventInfo(private val eventName: String,
                 replace(R.id.frame_layout,popUp).commit()
             }
         }
+        var dbref: DatabaseReference
+
 
         binding.registerButton.setOnClickListener {
             dbref= FirebaseDatabase.getInstance().getReference("registrations")
 
-            val eventUsersMap = HashMap<String, HashMap<String, String>>()
 
-            // Add a user ID to the eventUsersMap for a specific event ID
             val userId = auth.currentUser!!.uid
 
 
             // adding time
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-            // Get the current date and time as a Date object
-            val currentDate = Date()
             // Format the Date object as a string using the SimpleDateFormat object
-            val dateString = dateFormat.format(currentDate)
-            // Print the formatted string
-            println("Current date and time: $dateString")
+            val dateString = dateFormat.format(Date())
             // end time
 
 
-            eventUsersMap[eventId] = hashMapOf(userId to dateString)
-            dbref.updateChildren(eventUsersMap as Map<String, Any>)
+            dbref.child(eventId).addValueEventListener(object :ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        val usersMap = snapshot.value as? HashMap<String, String>
+                        if(usersMap?.contains(userId) == true){
+                        }else{
+                            usersMap?.set(userId, dateString)
+                            if (usersMap != null) {
+                                dbref.child(eventId).updateChildren(usersMap as kotlin.collections.Map<String, String>)
+                            }
+                        }
+                    }
+                    else{
+                        val usersMap = HashMap<String, String>()
+                        usersMap.set(userId, dateString)
+                        dbref.child(eventId).updateChildren(usersMap as Map<String, String>)
+
+                        println("Not exist but created")
+                    }
+
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
+
 
             println("The current user is: "+auth.currentUser!!.uid)
             println("The current event is : "+eventId)

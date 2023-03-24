@@ -9,6 +9,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.campusconnect.databinding.FragmentSettingsBinding
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class Settings : Fragment() {
@@ -23,6 +26,10 @@ class Settings : Fragment() {
         binding.SignOutButton.setOnClickListener {
             val auth = FirebaseAuth.getInstance()
             auth.signOut()
+            GlobalScope.launch(Dispatchers.IO) {
+                MS_Account_Object.mSingleAccountApp!!.signOut()
+            }
+
             val intent = Intent(requireContext(), Splash_Screen::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
