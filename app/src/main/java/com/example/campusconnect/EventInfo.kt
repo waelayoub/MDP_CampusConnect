@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.campusconnect.databinding.FragmentEventInfoBinding
 
@@ -35,6 +36,13 @@ class EventInfo(private val eventName: String,
         binding.eventDateInfoID.setText(eventDate)
         Glide.with(requireContext()).load(eventFlyer).into(binding.eventFlyerInfoID)
         Glide.with(requireContext()).load(eventIcon).into(binding.eventLogoInfoID)
+        binding.closebtn.setOnClickListener{
+            val activity=it!!.context as AppCompatActivity
+            activity.supportFragmentManager.beginTransaction().apply{
+                val popUp=Home()
+                replace(R.id.frame_layout,popUp).commit()
+            }
+        }
 
         return binding.root
     }
