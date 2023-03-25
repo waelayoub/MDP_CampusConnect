@@ -15,13 +15,11 @@ import com.microsoft.identity.client.IAuthenticationResult
 import com.microsoft.identity.client.ISingleAccountPublicClientApplication
 import com.microsoft.identity.client.SilentAuthenticationCallback
 import com.microsoft.identity.client.exception.MsalException
-import kotlinx.coroutines.*
 import java.net.URL
 import java.util.concurrent.CompletableFuture
 
 
 import android.view.View
-import android.view.WindowManager
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -44,7 +42,7 @@ class Splash_Screen : AppCompatActivity() {
         private val auth: FirebaseAuth = Firebase.auth
 
         private val SCOPES = arrayOf("Files.Read.All")
-        private var mSingleAccountApp: ISingleAccountPublicClientApplication? = null
+//        private var mSingleAccountApp: ISingleAccountPublicClientApplication? = null
         private val TAG: String = Splash_Screen::class.java.simpleName //bala ta3me mn chila later
     }
 
@@ -58,11 +56,11 @@ class Splash_Screen : AppCompatActivity() {
         binding.progressBar.setVisibility(View.INVISIBLE)
         binding.EnterButton.isEnabled=true
 
-        creatingInstanceMicrosoft(true)
+        creatingInstanceMicrosoft()
 
 
         binding.EnterButton.setOnClickListener {
-            mSingleAccountApp?.signIn(this, null, SCOPES, getAuthInteractiveCallback())
+            MS_Account_Object.mSingleAccountApp?.signIn(this, null, SCOPES, getAuthInteractiveCallback())
         }
 
 
@@ -72,15 +70,14 @@ class Splash_Screen : AppCompatActivity() {
 
     }
 
-    private fun creatingInstanceMicrosoft(loader: Boolean) {
+    private fun creatingInstanceMicrosoft() {
         PublicClientApplication.createSingleAccountPublicClientApplication(this.applicationContext,
             R.raw.auth_config_single_account,
             object : IPublicClientApplication.ISingleAccountApplicationCreatedListener {
                 override fun onCreated(application: ISingleAccountPublicClientApplication?) {
-                    mSingleAccountApp = application
-                    if (loader) {
-                        loadAccount()
-                    }
+                    MS_Account_Object.mSingleAccountApp = application
+                    loadAccount()
+
                 }
 
                 override fun onError(exception: MsalException?) {
@@ -127,13 +124,13 @@ class Splash_Screen : AppCompatActivity() {
         }
     }
 
-    private fun loadingSavedAccount() {
-        mSingleAccountApp?.getCurrentAccountAsync(
+    private fun loadAccount() {
+        MS_Account_Object.mSingleAccountApp?.getCurrentAccountAsync(
             object : ISingleAccountPublicClientApplication.CurrentAccountCallback {
                 override fun onAccountLoaded(activeAccount: IAccount?) {
                     if (activeAccount != null) {
 //                            println(activeAccount.authority)
-                        mSingleAccountApp!!.acquireTokenSilentAsync(
+                        MS_Account_Object.mSingleAccountApp!!.acquireTokenSilentAsync(
                             SCOPES,
                             "https://login.microsoftonline.com/11a6c59d-5d73-4a47-b23e-f5fcf9bf009b",
                             getAuthSilentCallback()
@@ -159,32 +156,6 @@ class Splash_Screen : AppCompatActivity() {
     }
 
 
-    // this will call authSilent
-    private fun loadAccount() {
-        if (mSingleAccountApp != null) {
-
-            if (auth.currentUser == null) {
-                GlobalScope.launch(Dispatchers.IO) {
-                    if (mSingleAccountApp!!.currentAccount != null) {
-                        try {
-                            println("I entered here in the signing out")
-                            mSingleAccountApp?.signOut()
-                            creatingInstanceMicrosoft(false)
-
-                        } catch (e: Exception) {
-                            println("I entered here in the catch of the signing out")
-                            loadingSavedAccount()
-                        }
-                    }
-                }
-            } else {
-                print("I am in the auth.currentUser != null")
-                loadingSavedAccount()
-            }
-        }
-    }
-
-
     // this will return the information about the user from the token
     private fun callGraphAPI(authenticationResult: IAuthenticationResult) {
 
@@ -199,23 +170,40 @@ class Splash_Screen : AppCompatActivity() {
                 }
             }).buildClient()
 
+
+
         binding.EnterButton.isEnabled=false
-        binding.overlayView.setVisibility(View.VISIBLE);
-        binding.progressBar.setVisibility(View.VISIBLE);
+        binding.overlayView.setVisibility(View.VISIBLE)
+        binding.progressBar.setVisibility(View.VISIBLE)
 
 
 
 
         GlobalScope.launch(Dispatchers.IO) {
             val result = graphClient.me().buildRequest().get() ?: return@launch
-            if (result.mail == null || result.id == null || result.displayName == null) {
+            if ((result.mail==null && result.userPrincipalName == null) || result.id == null) {
+                println(result.userPrincipalName)
+                println(result.id)
                 println("Somehow i entered here")
+                MS_Account_Object.mSingleAccountApp!!.signOut()
+
+                GlobalScope.launch(Dispatchers.Main){
+                    binding.EnterButton.isEnabled=true
+                    binding.overlayView.setVisibility(View.INVISIBLE)
+                    binding.progressBar.setVisibility(View.INVISIBLE)
+
+                    Toast.makeText(applicationContext, "Not a valid email", Toast.LENGTH_SHORT).show()
+                }
                 return@launch
             } else {
-                firebaseAuthUsage(result)
+                if (result.mail!=null){
+                    firebaseAuthUsage(result.mail!!, result.id!!, result.displayName)
+                }else{
+                    firebaseAuthUsage(result.userPrincipalName!!, result.id!!, result.displayName)
+                }
 
                 val intent = Intent(applicationContext, MainActivity::class.java)
-                val user = auth.currentUser
+//                val user = auth.currentUser
                 /*println("The user : " + user.toString())
                 println("Hello the user is " + user?.displayName.toString())
                 intent.putExtra("name", result.displayName)
@@ -229,49 +217,58 @@ class Splash_Screen : AppCompatActivity() {
 
     }
 
-    private fun firebaseAuthUsage(result: User) {
+    private fun firebaseAuthUsage(mail:String, pass:String, name:String?) {
         println("Entered firebase auth")
-        auth.createUserWithEmailAndPassword(result.mail!!, result.id.toString())
+        auth.createUserWithEmailAndPassword(mail, pass)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     println("Firebase creation Success")
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
 
-                    val profileUpdates = UserProfileChangeRequest.Builder()
-                        .setDisplayName(result.displayName)
-                        .build()
+                    if (name!=null){
+                        val profileUpdates = UserProfileChangeRequest.Builder()
+                            .setDisplayName(name)
+                            .build()
+                        val user = auth.currentUser
 
-                    val user = auth.currentUser
-
-                    user?.updateProfile(profileUpdates)
-                        ?.addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                Log.d(TAG, "User profile updated.")
+                        user?.updateProfile(profileUpdates)
+                            ?.addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    Log.d(TAG, "User profile updated.")
+                                }
                             }
-                        }
+                    }
+
                     println("Creation of user successful (Firebase)")
                 } else {
                     println("Entered now the signing in")
                 }
             }
 
-        auth.signInWithEmailAndPassword(result.mail!!, result.id.toString())
+//        println("result.userPrincipalName : "+result.userPrincipalName!!)
+//        println("result.id : "+result.id.toString())
+
+        auth.signInWithEmailAndPassword(mail, pass)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     println("Logging of user successful (Firebase)")
 
-                    println("The name that should appear is : " + result.displayName)
+                    println("The name that should appear is : " + name)
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithEmail:success")
                 } else {
                     println("Entered the worst case")
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithEmail:failure", task.exception)
+                    GlobalScope.launch(Dispatchers.IO) {
+                        MS_Account_Object.mSingleAccountApp?.signOut()
+                    }
                     Toast.makeText(
                         baseContext, "Authentication failed.",
                         Toast.LENGTH_SHORT
                     ).show()
+                    return@addOnCompleteListener
                 }
             }
 

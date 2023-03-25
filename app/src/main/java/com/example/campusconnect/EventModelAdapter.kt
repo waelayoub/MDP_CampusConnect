@@ -44,7 +44,6 @@ class EventModelAdapter(val context: Context, val eventlist:ArrayList<EventModel
 
             val activity=it!!.context as AppCompatActivity
             activity.supportFragmentManager.beginTransaction().apply {
-
                 val popUp=EventInfo(currentitem.eventName.toString(),
                 currentitem.eventDate.toString(),
                 currentitem.eventTime.toString(),

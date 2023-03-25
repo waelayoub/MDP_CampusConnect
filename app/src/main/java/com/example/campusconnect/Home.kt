@@ -28,24 +28,70 @@ class Home : Fragment() {
 
     private fun getEventData(){
         dbref= FirebaseDatabase.getInstance().getReference("Events")
-        dbref.addValueEventListener(object: ValueEventListener {
+//        dbref.addValueEventListener(object: ValueEventListener {
+//
+//            override fun onDataChange(snapshot: DataSnapshot){
+//                if (snapshot.exists()){
+//
+//                    for (eventSnapshot in snapshot.children){
+//                        val event=eventSnapshot.getValue(EventModel::class.java)
+//                        event!!.eventId=eventSnapshot.key
+//                        eventlist.add(event!!)
+//                    }
+//                    eventRecyclerView.adapter=EventModelAdapter(requireContext(),eventlist)
+//                }
+//            }
+//            override fun onCancelled(error: DatabaseError){
+//
+//            }
+//        })
 
-            override fun onDataChange(snapshot: DataSnapshot){
-                if (snapshot.exists()){
+        dbref.addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val event = snapshot.getValue(EventModel::class.java)
+                event!!.eventId = snapshot.key
+                eventlist.add(event!!)
+                adapter.notifyDataSetChanged()
+            }
 
-                    for (eventSnapshot in snapshot.children){
-                        eventSnapshot.key
-                        val event=eventSnapshot.getValue(EventModel::class.java)
-                        eventlist.add(event!!)
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
+                val event = snapshot.getValue(EventModel::class.java)
+                event!!.eventId = snapshot.key
+
+                for (i in eventlist.indices) {
+                    if (eventlist[i].eventId == event.eventId) {
+                        eventlist[i] = event
+                        adapter.notifyItemChanged(i)
+                        break
                     }
-                    eventRecyclerView.adapter=EventModelAdapter(requireContext(),eventlist)
                 }
             }
-            override fun onCancelled(error: DatabaseError){
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {
+                val event = snapshot.getValue(EventModel::class.java)
+                event!!.eventId = snapshot.key
+
+                for (i in eventlist.indices) {
+                    if (eventlist[i].eventId == event.eventId) {
+                        eventlist.removeAt(i)
+                        adapter.notifyItemRemoved(i)
+                        break
+                    }
+                }
+            }
+
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
 
             }
         })
     }
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,22 +112,5 @@ class Home : Fragment() {
 
         return binding.root
     }
-
-
-//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        super.onViewCreated(view, savedInstanceState)
-//        eventlist.clear()
-//        getEventData()
-//        val layoutManager=LinearLayoutManager(context)
-//        eventRecyclerView=view.findViewById(R.id.eventlist)
-//        eventRecyclerView.layoutManager=layoutManager
-//        eventRecyclerView.setHasFixedSize(true)
-//        adapter= EventModelAdapter(requireContext(),eventlist)
-//        eventRecyclerView.adapter=adapter
-//
-//
-//
-//    }
-
 
 }

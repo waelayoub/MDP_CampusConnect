@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Home"
     android:background="@color/background_blue"
+    android:configChanges="orientation|screenSize"
     android:paddingHorizontal="0dp">
 
 
@@ -26,29 +28,21 @@
         app:layout_constraintTop_toTopOf="parent"
 
         />
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true"
-            app:layout_constraintTop_toBottomOf="@id/calendarView"
-            app:layout_constraintStart_toStartOf="parent"
-            android:background="@color/background_blue"
-            app:layout_constraintEnd_toEndOf="parent">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/eventlist"
-                    android:layout_width="match_parent"
-                    android:layout_height="750dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:listitem="@layout/events_cardview">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/eventlist"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/background_blue"
 
-                </androidx.recyclerview.widget.RecyclerView>
-            </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calendarView"
+        tools:listitem="@layout/events_cardview">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
