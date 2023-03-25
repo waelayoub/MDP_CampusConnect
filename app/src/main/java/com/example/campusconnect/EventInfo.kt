@@ -53,49 +53,25 @@ class EventInfo(private val eventName: String,
                 replace(R.id.frame_layout,popUp).commit()
             }
         }
-        var dbref: DatabaseReference
-
 
         binding.registerButton.setOnClickListener {
-            dbref= FirebaseDatabase.getInstance().getReference("registrations")
 
 
             val userId = auth.currentUser!!.uid
 
-
             // adding time
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-            // Format the Date object as a string using the SimpleDateFormat object
             val dateString = dateFormat.format(Date())
             // end time
 
-
-            dbref.child(eventId).addValueEventListener(object :ValueEventListener{
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        val usersMap = snapshot.value as? HashMap<String, String>
-                        if(usersMap?.contains(userId) == true){
-                        }else{
-                            usersMap?.set(userId, dateString)
-                            if (usersMap != null) {
-                                dbref.child(eventId).updateChildren(usersMap as kotlin.collections.Map<String, String>)
-                            }
-                        }
-                    }
-                    else{
-                        val usersMap = HashMap<String, String>()
-                        usersMap.set(userId, dateString)
-                        dbref.child(eventId).updateChildren(usersMap as Map<String, String>)
-
-                        println("Not exist but created")
-                    }
-
+            val dbRef = FirebaseDatabase.getInstance().getReference("registrations").child(eventId)
+            dbRef.child(userId).setValue(dateString)
+                .addOnSuccessListener {
+                    println("Success")
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
+                .addOnFailureListener {
+                    println("Fail")
                 }
-            })
 
 
             println("The current user is: "+auth.currentUser!!.uid)
