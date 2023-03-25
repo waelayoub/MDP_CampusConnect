@@ -28,23 +28,7 @@ class Home : Fragment() {
 
     private fun getEventData(){
         dbref= FirebaseDatabase.getInstance().getReference("Events")
-//        dbref.addValueEventListener(object: ValueEventListener {
-//
-//            override fun onDataChange(snapshot: DataSnapshot){
-//                if (snapshot.exists()){
-//
-//                    for (eventSnapshot in snapshot.children){
-//                        val event=eventSnapshot.getValue(EventModel::class.java)
-//                        event!!.eventId=eventSnapshot.key
-//                        eventlist.add(event!!)
-//                    }
-//                    eventRecyclerView.adapter=EventModelAdapter(requireContext(),eventlist)
-//                }
-//            }
-//            override fun onCancelled(error: DatabaseError){
-//
-//            }
-//        })
+
 
         dbref.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
