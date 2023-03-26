@@ -75,31 +75,27 @@ class MyEvents : Fragment() {
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                 println("I am in child changed")
-
-                // Implement code to handle changes to the data
-                if (snapshot.child(uid).exists()) {
-                    val eventRef = dbrefEvent.child(snapshot.key!!)
-                    eventRef.get().addOnSuccessListener { eventSnapshot ->
-                        if (eventSnapshot.exists()) {
-                            val eventData = eventSnapshot.getValue(EventModel::class.java)
-                            eventData!!.eventId=eventSnapshot.key
-                            eventlist.add(eventData!!)
-                            eventRecyclerView.adapter?.notifyDataSetChanged()
-                            // Process the data as needed
-                        }
-                    }.addOnFailureListener { exception ->
-                        // Handle any errors that occur
+                val removedKey = snapshot.key
+                for ((index, event) in eventlist.withIndex()) {
+                    if (event.eventId == removedKey) {
+                        eventlist.removeAt(index)
+                        adapter=EventModelAdapter(requireContext(),eventlist)
+                        eventRecyclerView.adapter=adapter
+                        eventRecyclerView.adapter?.notifyDataSetChanged()
+                        break
                     }
                 }
 
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
-
+                println("I am in child removed")
                 val removedKey = snapshot.key
                 for ((index, event) in eventlist.withIndex()) {
                     if (event.eventId == removedKey) {
                         eventlist.removeAt(index)
+                        adapter=EventModelAdapter(requireContext(),eventlist)
+                        eventRecyclerView.adapter=adapter
                         eventRecyclerView.adapter?.notifyDataSetChanged()
                         break
                     }

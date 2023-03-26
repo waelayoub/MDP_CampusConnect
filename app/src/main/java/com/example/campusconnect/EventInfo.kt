@@ -14,7 +14,6 @@ import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 import java.util.*
 import java.text.SimpleDateFormat
-import kotlin.collections.HashMap
 
 
 class EventInfo(private val eventName: String,
@@ -31,6 +30,7 @@ class EventInfo(private val eventName: String,
 
     private lateinit var binding: FragmentEventInfoBinding
     private val auth: FirebaseAuth = Firebase.auth
+    private val dbref: DatabaseReference=FirebaseDatabase.getInstance().getReference("registrations")
 
 
 
@@ -39,6 +39,13 @@ class EventInfo(private val eventName: String,
         savedInstanceState: Bundle?
     ): View? {
         binding= FragmentEventInfoBinding.inflate(inflater, container, false)
+        dbref.child(eventId).get().addOnSuccessListener {
+            if(it.child(auth.currentUser!!.uid).exists()){
+                binding.registerButton.text="Registered"
+                binding.registerButton.isEnabled=false
+                // Here to add all modifications if event is registered (@Ralph)
+            }
+        }
         binding.eventNameInfoID.setText(eventName)
         binding.eventTimeInfoID.setText(eventTime)
         binding.eventDescriptionInfoID.setText(eventDescription)
@@ -46,6 +53,7 @@ class EventInfo(private val eventName: String,
         binding.eventDateInfoID.setText(eventDate)
         Glide.with(requireContext()).load(eventFlyer).into(binding.eventFlyerInfoID)
         Glide.with(requireContext()).load(eventIcon).into(binding.eventLogoInfoID)
+
         binding.closebtn.setOnClickListener{
             val activity=it!!.context as AppCompatActivity
             activity.supportFragmentManager.beginTransaction().apply{
@@ -68,6 +76,9 @@ class EventInfo(private val eventName: String,
             dbRef.child(userId).setValue(dateString)
                 .addOnSuccessListener {
                     println("Success")
+                    binding.registerButton.text="Registered"
+                    binding.registerButton.isEnabled=false
+                    // (@Ralph) change also ui for button if newly registered
                 }
                 .addOnFailureListener {
                     println("Fail")
